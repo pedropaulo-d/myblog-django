@@ -69,12 +69,12 @@ class Post(models.Model):
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
     
-    title = models.CharField(max_lenght=65)
+    title = models.CharField(max_length=65,)
     slug = models.SlugField(
         unique=True, default="",
-        null=False, blank=True, max_lenght=255
+        null=False, blank=True, max_length=255
     )
-    excerpt = models.CharField(max_lenght=150)
+    excerpt = models.CharField(max_length=150)
     is_published = models.BooleanField(
         default=False,
         help_text=(
