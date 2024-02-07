@@ -57,8 +57,8 @@ class PostAdmin(SummernoteModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if change:
-            obj.update_by = request.user
+            obj.updated_by = request.user  # type: ignore
         else:
-            obj.created_by = request.user
+            obj.created_by = request.user  # type: ignore
 
-        obj.save() 
+        obj.save()

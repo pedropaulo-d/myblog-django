@@ -1,8 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
-from utils.rands import slugify_new
+from django.urls import reverse
 from django_summernote.models import AbstractAttachment
 from utils.images import resize_image
+from utils.rands import slugify_new
+
 
 class PostAttachment(AbstractAttachment):
     def save(self, *args, **kwargs):
@@ -27,17 +29,17 @@ class Tag(models.Model):
         verbose_name = 'Tag'
         verbose_name_plural = 'Tags'
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
     slug = models.SlugField(
         unique=True, default=None,
-        null=True, blank=True, max_length=100,
+        null=True, blank=True, max_length=255,
     )
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_new(self.name, 4)
         return super().save(*args, **kwargs)
-    
+
     def __str__(self) -> str:
         return self.name
 
@@ -47,19 +49,20 @@ class Category(models.Model):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
     slug = models.SlugField(
         unique=True, default=None,
-        null=True, blank=True, max_length=100,
+        null=True, blank=True, max_length=255,
     )
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_new(self.name, 4)
         return super().save(*args, **kwargs)
-    
+
     def __str__(self) -> str:
         return self.name
+
 
 class Page(models.Model):
     title = models.CharField(max_length=65,)
@@ -76,6 +79,11 @@ class Page(models.Model):
     )
     content = models.TextField()
 
+    def get_absolute_url(self):
+        if not self.is_published:
+            return reverse('blog:index')
+        return reverse('blog:page', args=(self.slug,))
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_new(self.title, 4)
@@ -83,12 +91,22 @@ class Page(models.Model):
 
     def __str__(self) -> str:
         return self.title
-    
+
+
+class PostManager(models.Manager):
+    def get_published(self):
+        return self\
+            .filter(is_published=True)\
+            .order_by('-pk')
+
+
 class Post(models.Model):
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
-    
+
+    objects = PostManager()
+
     title = models.CharField(max_length=65,)
     slug = models.SlugField(
         unique=True, default="",
@@ -99,10 +117,9 @@ class Post(models.Model):
         default=False,
         help_text=(
             'Este campo precisará estar marcado '
-            'para o post ser exibida publicamente.'
+            'para o post ser exibido publicamente.'
         ),
     )
-
     content = models.TextField()
     cover = models.ImageField(upload_to='posts/%Y/%m/', blank=True, default='')
     cover_in_post_content = models.BooleanField(
@@ -134,17 +151,22 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        if not self.is_published:
+            return reverse('blog:index')
+        return reverse('blog:post', args=(self.slug,))
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_new(self.title, 4)
-        
+
         current_cover_name = str(self.cover.name)
-        super_save = super().save(**args, **kwargs)
+        super_save = super().save(*args, **kwargs)
         cover_changed = False
 
         if self.cover:
             cover_changed = current_cover_name != self.cover.name
-        
+
         if cover_changed:
             resize_image(self.cover, 900, True, 70)
 
