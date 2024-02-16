@@ -266,6 +266,7 @@ html,
   max-width: 40rem;
   margin-inline: auto;
   font-size: inherit;
+  color: #FFFFFF;
 }
 
 .search-input {
@@ -277,6 +278,7 @@ html,
   padding-inline-end: calc(var(--spacing-base) + var(--spacing-micro));
   border-radius: var(--br-base);
   outline: none;
+  color: #FFFFFF;
 }
 .search-input::placeholder {
   color: hsl(var(--clr-gray-ltr));
