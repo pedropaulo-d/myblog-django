@@ -82,6 +82,11 @@ class Page(models.Model):
     def get_absolute_url(self):
         if not self.is_published:
             return reverse('blog:index')
+        return reverse('blog:page', args=(self.slug, ))
+    
+    def get_absolute_url(self):
+        if not self.is_published:
+            return reverse('blog:index')
         return reverse('blog:page', args=(self.slug,))
 
     def save(self, *args, **kwargs):

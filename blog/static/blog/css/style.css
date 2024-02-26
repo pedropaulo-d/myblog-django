@@ -210,6 +210,10 @@ html,
   text-align: center;
 }
 
+.mt-base {
+  margin-top: var(--spacing-base);
+}
+
 .separator {
   background: hsl(var(--clr-gray-ltst));
   width: 50%;
