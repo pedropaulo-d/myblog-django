@@ -11,7 +11,7 @@ Este é um projeto de blog construído utilizando o framework Django. Ele fornec
 ## Como Usar
 
 1. Clone este repositório em sua máquina local.
-2. Instale as dependências usando o comando `pip install -r requirements.txt`.
+2. Instale as dependências
 3. Execute as migrações do banco de dados usando `python manage.py migrate`.
 4. Inicie o servidor de desenvolvimento com `python manage.py runserver`.
 5. Acesse o blog em seu navegador usando o endereço fornecido pelo servidor local.
